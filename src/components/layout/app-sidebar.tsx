@@ -47,43 +47,48 @@ export function AppSidebar({ className }: { className?: string }) {
   const menus = session?.user?.role ? getRoleMenus(session.user.role) : [];
 
   return (
-    <div className={`flex h-full w-full flex-col border-r bg-white/80 backdrop-blur-xl ${className}`}>
-      <div className="flex h-16 shrink-0 items-center px-6 border-b border-slate-100">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl text-blue-700 tracking-tight">
-          <GraduationCap className="h-6 w-6 text-blue-600" />
-          <span>SIAKAD</span>
+    <div className={`flex h-full w-full flex-col bg-slate-900 text-slate-300 ${className}`}>
+      <div className="flex h-20 shrink-0 items-center px-6 border-b border-slate-800">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="bg-emerald-500/20 p-2 rounded-lg border border-emerald-500/30">
+            <GraduationCap className="h-6 w-6 text-emerald-500" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-sm text-emerald-500 tracking-wider">SIAKAD</span>
+            <span className="font-semibold text-xs text-white tracking-widest uppercase">{session?.user?.role || 'PORTAL'} PORTAL</span>
+          </div>
         </Link>
       </div>
-      <div className="flex-1 overflow-auto py-4">
-        <nav className="grid gap-1 px-4 text-sm font-medium">
+      <div className="flex-1 overflow-auto py-6">
+        <nav className="grid gap-2 px-4 text-sm font-medium">
           {menus.map((menu, index) => {
             const Icon = menu.icon;
-            const isActive = pathname === menu.href;
+            const isActive = pathname === menu.href || pathname?.startsWith(menu.href + '/');
             return (
               <Link
                 key={index}
                 href={menu.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all ${
+                className={`flex items-center gap-4 rounded-xl px-4 py-3 transition-all ${
                   isActive
-                    ? "bg-blue-50 text-blue-700 font-semibold shadow-sm"
-                    : "text-slate-500 hover:bg-slate-100/80 hover:text-slate-900"
+                    ? "bg-emerald-500/10 text-emerald-500 font-semibold"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                <Icon className={`h-5 w-5 ${isActive ? "text-emerald-500" : "text-slate-400"}`} />
                 {menu.name}
               </Link>
             );
           })}
         </nav>
       </div>
-      <div className="mt-auto p-4 border-t border-slate-100">
-        <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold">
+      <div className="mt-auto p-4 border-t border-slate-800">
+        <div className="flex items-center gap-3 rounded-xl hover:bg-slate-800 p-3 transition-colors cursor-pointer">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500 font-bold border border-emerald-500/30">
             {session?.user?.name?.charAt(0).toUpperCase() || 'U'}
           </div>
-          <div className="flex flex-col text-sm">
-            <span className="font-semibold text-slate-700 truncate max-w-30">{session?.user?.name}</span>
-            <span className="text-xs text-slate-500">{session?.user?.role}</span>
+          <div className="flex flex-col text-sm overflow-hidden">
+            <span className="font-semibold text-slate-200 truncate max-w-30">{session?.user?.name}</span>
+            <span className="text-xs text-slate-500 truncate">{session?.user?.role}</span>
           </div>
         </div>
       </div>

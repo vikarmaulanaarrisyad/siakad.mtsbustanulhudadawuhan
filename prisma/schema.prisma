@@ -32,9 +32,10 @@ model User {
 model AcademicYear {
   id        String   @id @default(cuid())
   name      String // e.g., "2023/2024"
-  semester  String // "Ganjil" or "Genap"
-  startDate DateTime
-  endDate   DateTime
+  semester    String // "Ganjil" or "Genap"
+  startDate   DateTime
+  midtermDate DateTime? // Tanggal Ujian Tengah Semester
+  endDate     DateTime
   status    String   @default("Draf") // "Draf", "Aktif", "Selesai"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -28,6 +28,28 @@ export class AcademicYearService {
       }
     };
   }
+
+  async getActivePeriod() {
+    return await academicYearRepository.getActive();
+  }
+
+  async createNewPeriod(data: { name: string, semester: string, startDate: Date, midtermDate: Date | null, endDate: Date, isActive: boolean }) {
+    // Force HMR recompile
+    // Jika user mencentang toggle "Setel sebagai periode aktif", ubah semua yang aktif menjadi selesai
+    if (data.isActive) {
+      await academicYearRepository.setAllToInactive();
+    }
+
+    // Buat data baru
+    return await academicYearRepository.create({
+      name: data.name,
+      semester: data.semester,
+      startDate: data.startDate,
+      midtermDate: data.midtermDate,
+      endDate: data.endDate,
+      status: data.isActive ? 'Aktif' : 'Draf'
+    });
+  }
 }
 
 export const academicYearService = new AcademicYearService();

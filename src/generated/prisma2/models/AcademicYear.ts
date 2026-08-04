@@ -29,6 +29,7 @@ export type AcademicYearMinAggregateOutputType = {
   name: string | null
   semester: string | null
   startDate: Date | null
+  midtermDate: Date | null
   endDate: Date | null
   status: string | null
   createdAt: Date | null
@@ -40,6 +41,7 @@ export type AcademicYearMaxAggregateOutputType = {
   name: string | null
   semester: string | null
   startDate: Date | null
+  midtermDate: Date | null
   endDate: Date | null
   status: string | null
   createdAt: Date | null
@@ -51,6 +53,7 @@ export type AcademicYearCountAggregateOutputType = {
   name: number
   semester: number
   startDate: number
+  midtermDate: number
   endDate: number
   status: number
   createdAt: number
@@ -64,6 +67,7 @@ export type AcademicYearMinAggregateInputType = {
   name?: true
   semester?: true
   startDate?: true
+  midtermDate?: true
   endDate?: true
   status?: true
   createdAt?: true
@@ -75,6 +79,7 @@ export type AcademicYearMaxAggregateInputType = {
   name?: true
   semester?: true
   startDate?: true
+  midtermDate?: true
   endDate?: true
   status?: true
   createdAt?: true
@@ -86,6 +91,7 @@ export type AcademicYearCountAggregateInputType = {
   name?: true
   semester?: true
   startDate?: true
+  midtermDate?: true
   endDate?: true
   status?: true
   createdAt?: true
@@ -170,6 +176,7 @@ export type AcademicYearGroupByOutputType = {
   name: string
   semester: string
   startDate: Date
+  midtermDate: Date | null
   endDate: Date
   status: string
   createdAt: Date
@@ -202,6 +209,7 @@ export type AcademicYearWhereInput = {
   name?: Prisma.StringFilter<"AcademicYear"> | string
   semester?: Prisma.StringFilter<"AcademicYear"> | string
   startDate?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
+  midtermDate?: Prisma.DateTimeNullableFilter<"AcademicYear"> | Date | string | null
   endDate?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
   status?: Prisma.StringFilter<"AcademicYear"> | string
   createdAt?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
@@ -213,6 +221,7 @@ export type AcademicYearOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   semester?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
+  midtermDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -228,6 +237,7 @@ export type AcademicYearWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"AcademicYear"> | string
   semester?: Prisma.StringFilter<"AcademicYear"> | string
   startDate?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
+  midtermDate?: Prisma.DateTimeNullableFilter<"AcademicYear"> | Date | string | null
   endDate?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
   status?: Prisma.StringFilter<"AcademicYear"> | string
   createdAt?: Prisma.DateTimeFilter<"AcademicYear"> | Date | string
@@ -239,6 +249,7 @@ export type AcademicYearOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   semester?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
+  midtermDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -256,6 +267,7 @@ export type AcademicYearScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"AcademicYear"> | string
   semester?: Prisma.StringWithAggregatesFilter<"AcademicYear"> | string
   startDate?: Prisma.DateTimeWithAggregatesFilter<"AcademicYear"> | Date | string
+  midtermDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AcademicYear"> | Date | string | null
   endDate?: Prisma.DateTimeWithAggregatesFilter<"AcademicYear"> | Date | string
   status?: Prisma.StringWithAggregatesFilter<"AcademicYear"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AcademicYear"> | Date | string
@@ -267,6 +279,7 @@ export type AcademicYearCreateInput = {
   name: string
   semester: string
   startDate: Date | string
+  midtermDate?: Date | string | null
   endDate: Date | string
   status?: string
   createdAt?: Date | string
@@ -278,6 +291,7 @@ export type AcademicYearUncheckedCreateInput = {
   name: string
   semester: string
   startDate: Date | string
+  midtermDate?: Date | string | null
   endDate: Date | string
   status?: string
   createdAt?: Date | string
@@ -289,6 +303,7 @@ export type AcademicYearUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   semester?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  midtermDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -300,6 +315,7 @@ export type AcademicYearUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   semester?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  midtermDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -311,6 +327,7 @@ export type AcademicYearCreateManyInput = {
   name: string
   semester: string
   startDate: Date | string
+  midtermDate?: Date | string | null
   endDate: Date | string
   status?: string
   createdAt?: Date | string
@@ -322,6 +339,7 @@ export type AcademicYearUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   semester?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  midtermDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -333,6 +351,7 @@ export type AcademicYearUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   semester?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  midtermDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -349,6 +368,7 @@ export type AcademicYearCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   semester?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
+  midtermDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -360,6 +380,7 @@ export type AcademicYearMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   semester?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
+  midtermDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -371,6 +392,7 @@ export type AcademicYearMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   semester?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
+  midtermDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -384,6 +406,7 @@ export type AcademicYearSelect<ExtArgs extends runtime.Types.Extensions.Internal
   name?: boolean
   semester?: boolean
   startDate?: boolean
+  midtermDate?: boolean
   endDate?: boolean
   status?: boolean
   createdAt?: boolean
@@ -395,6 +418,7 @@ export type AcademicYearSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean
   semester?: boolean
   startDate?: boolean
+  midtermDate?: boolean
   endDate?: boolean
   status?: boolean
   createdAt?: boolean
@@ -406,6 +430,7 @@ export type AcademicYearSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean
   semester?: boolean
   startDate?: boolean
+  midtermDate?: boolean
   endDate?: boolean
   status?: boolean
   createdAt?: boolean
@@ -417,13 +442,14 @@ export type AcademicYearSelectScalar = {
   name?: boolean
   semester?: boolean
   startDate?: boolean
+  midtermDate?: boolean
   endDate?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AcademicYearOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "semester" | "startDate" | "endDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["academicYear"]>
+export type AcademicYearOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "semester" | "startDate" | "midtermDate" | "endDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["academicYear"]>
 
 export type $AcademicYearPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AcademicYear"
@@ -433,6 +459,7 @@ export type $AcademicYearPayload<ExtArgs extends runtime.Types.Extensions.Intern
     name: string
     semester: string
     startDate: Date
+    midtermDate: Date | null
     endDate: Date
     status: string
     createdAt: Date
@@ -864,6 +891,7 @@ export interface AcademicYearFieldRefs {
   readonly name: Prisma.FieldRef<"AcademicYear", 'String'>
   readonly semester: Prisma.FieldRef<"AcademicYear", 'String'>
   readonly startDate: Prisma.FieldRef<"AcademicYear", 'DateTime'>
+  readonly midtermDate: Prisma.FieldRef<"AcademicYear", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"AcademicYear", 'DateTime'>
   readonly status: Prisma.FieldRef<"AcademicYear", 'String'>
   readonly createdAt: Prisma.FieldRef<"AcademicYear", 'DateTime'>

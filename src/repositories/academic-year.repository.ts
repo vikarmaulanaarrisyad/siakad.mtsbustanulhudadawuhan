@@ -1,8 +1,8 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export class AcademicYearRepository {
   async getPaginated(skip: number, take: number, where: any) {
-    return prisma.academicYear.findMany({
+    return db.academicYear.findMany({
       where,
       skip,
       take,
@@ -13,8 +13,25 @@ export class AcademicYearRepository {
     });
   }
 
+  async getActive() {
+    return db.academicYear.findFirst({
+      where: { status: 'Aktif' }
+    });
+  }
+
   async count(where: any) {
-    return prisma.academicYear.count({ where });
+    return db.academicYear.count({ where });
+  }
+
+  async setAllToInactive() {
+    return db.academicYear.updateMany({
+      where: { status: 'Aktif' },
+      data: { status: 'Selesai' }
+    });
+  }
+
+  async create(data: any) {
+    return db.academicYear.create({ data });
   }
 }
 

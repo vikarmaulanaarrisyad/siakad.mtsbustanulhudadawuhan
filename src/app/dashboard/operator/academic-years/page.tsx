@@ -1,8 +1,9 @@
-import { getAcademicYears } from "@/actions/academic-year";
+import { getAcademicYears, getActiveAcademicYear } from "@/actions/academic-year";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit2, Eye, Calendar, FileText, CalendarDays } from "lucide-react";
+import { CreateAcademicYearDialog } from "@/components/features/academic-year/create-dialog";
 import {
   Table,
   TableBody,
@@ -31,6 +32,7 @@ export default async function AcademicYearsPage({
   const limit = 10;
 
   const { data, metadata } = await getAcademicYears(page, limit, search);
+  const activePeriod = await getActiveAcademicYear();
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -63,10 +65,7 @@ export default async function AcademicYearsPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button className="bg-green-700 hover:bg-green-800 text-white rounded-lg shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Tahun Pelajaran Baru
-          </Button>
+          <CreateAcademicYearDialog />
         </div>
       </div>
 
@@ -79,12 +78,16 @@ export default async function AcademicYearsPage({
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="font-bold text-slate-800 uppercase tracking-wider text-sm mb-1">Periode Aktif Saat Ini</h3>
-                <p className="text-slate-600 text-sm">2023/2024 &mdash; Ganjil</p>
+                <p className="text-slate-600 text-sm">
+                  {activePeriod ? `${activePeriod.name} — ${activePeriod.semester}` : 'Tidak ada periode aktif'}
+                </p>
               </div>
-              <Badge className="bg-emerald-100/80 text-emerald-700 hover:bg-emerald-100 border-none px-3 py-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
-                Aktif
-              </Badge>
+              {activePeriod && (
+                <Badge className="bg-emerald-100/80 text-emerald-700 hover:bg-emerald-100 border-none px-3 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
+                  Aktif
+                </Badge>
+              )}
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -207,44 +210,46 @@ export default async function AcademicYearsPage({
               </div>
               <div>
                 <h3 className="font-bold text-slate-800 text-sm">Jadwal Akademik</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Periode 2023/2024 Ganjil</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {activePeriod ? `Periode ${activePeriod.name} ${activePeriod.semester}` : 'Belum ditentukan'}
+                </p>
               </div>
             </div>
 
-            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-slate-200 before:to-transparent pl-8">
-              
-              <div className="relative">
-                <div className="absolute -left-8.75 top-1 bg-emerald-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+            {activePeriod ? (
+              <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-slate-200 before:to-transparent pl-8">
+                
+                <div className="relative">
+                  <div className="absolute -left-8.75 top-1 bg-emerald-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                  </div>
+                  <h4 className="text-sm font-semibold text-slate-800">Mulai Kegiatan Belajar</h4>
+                  <p className="text-xs text-slate-500 mt-1">{formatDate(activePeriod.startDate)}</p>
                 </div>
-                <h4 className="text-sm font-semibold text-slate-800">Masa Registrasi Ulang</h4>
-                <p className="text-xs text-slate-500 mt-1">01 - 15 Jul 2023</p>
-              </div>
 
-              <div className="relative">
-                <div className="absolute -left-8.75 top-1 bg-emerald-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
-                </div>
-                <h4 className="text-sm font-semibold text-slate-800">Mulai Kegiatan Belajar</h4>
-                <p className="text-xs text-slate-500 mt-1">17 Jul 2023</p>
-              </div>
+                {activePeriod.midtermDate && (
+                  <div className="relative">
+                    <div className="absolute -left-8.75 top-1 bg-blue-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                    </div>
+                    <h4 className="text-sm font-semibold text-slate-800">Ujian Tengah Semester</h4>
+                    <p className="text-xs text-slate-500 mt-1">{formatDate(activePeriod.midtermDate)}</p>
+                  </div>
+                )}
 
-              <div className="relative">
-                <div className="absolute -left-8.75 top-1 bg-blue-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                <div className="relative">
+                  <div className="absolute -left-8.75 top-1 bg-blue-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                  </div>
+                  <h4 className="text-sm font-semibold text-slate-800">Ujian Akhir Semester</h4>
+                  <p className="text-xs text-slate-500 mt-1">{formatDate(activePeriod.endDate)}</p>
                 </div>
-                <h4 className="text-sm font-semibold text-slate-800">Ujian Tengah Semester</h4>
-                <p className="text-xs text-slate-500 mt-1">18 - 25 Sep 2023</p>
               </div>
-
-              <div className="relative">
-                <div className="absolute -left-8.75 top-1 bg-blue-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
-                </div>
-                <h4 className="text-sm font-semibold text-slate-800">Ujian Akhir Semester</h4>
-                <p className="text-xs text-slate-500 mt-1">04 - 12 Des 2023</p>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-sm text-slate-500">Tidak ada jadwal akademik aktif saat ini.</p>
               </div>
-            </div>
+            )}
 
             <div className="pt-6 mt-6 border-t border-slate-100">
               <a href="#" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline">

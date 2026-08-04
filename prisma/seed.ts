@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '../src/generated/prisma/client'
+import { PrismaClient, Role } from '../src/generated/prisma2/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
@@ -83,6 +83,80 @@ async function main() {
     },
   })
   console.log(`✅ Dibuat: ${siswa.role} - ${siswa.email}`)
+
+  // 6. Buat Tahun Pelajaran
+  const academicYears = [
+    {
+      name: '2024/2025',
+      semester: 'Ganjil',
+      startDate: new Date('2024-07-15'),
+      endDate: new Date('2024-12-20'),
+      status: 'Draf',
+    },
+    {
+      name: '2023/2024',
+      semester: 'Ganjil',
+      startDate: new Date('2023-07-17'),
+      endDate: new Date('2023-12-22'),
+      status: 'Aktif',
+    },
+    {
+      name: '2022/2023',
+      semester: 'Genap',
+      startDate: new Date('2023-01-02'),
+      endDate: new Date('2023-06-23'),
+      status: 'Selesai',
+    },
+    {
+      name: '2022/2023',
+      semester: 'Ganjil',
+      startDate: new Date('2022-07-18'),
+      endDate: new Date('2022-12-23'),
+      status: 'Selesai',
+    },
+    {
+      name: '2021/2022',
+      semester: 'Genap',
+      startDate: new Date('2022-01-03'),
+      endDate: new Date('2022-06-24'),
+      status: 'Selesai',
+    },
+    {
+      name: '2021/2022',
+      semester: 'Ganjil',
+      startDate: new Date('2021-07-19'),
+      endDate: new Date('2021-12-24'),
+      status: 'Selesai',
+    },
+    {
+      name: '2020/2021',
+      semester: 'Genap',
+      startDate: new Date('2021-01-04'),
+      endDate: new Date('2021-06-25'),
+      status: 'Selesai',
+    },
+    {
+      name: '2020/2021',
+      semester: 'Ganjil',
+      startDate: new Date('2020-07-20'),
+      endDate: new Date('2020-12-25'),
+      status: 'Selesai',
+    }
+  ]
+
+  for (const ay of academicYears) {
+    await prisma.academicYear.upsert({
+      where: {
+        name_semester: {
+          name: ay.name,
+          semester: ay.semester,
+        },
+      },
+      update: ay,
+      create: ay,
+    })
+  }
+  console.log(`✅ Dibuat: ${academicYears.length} Tahun Pelajaran`)
 
   console.log('🎉 Seeding selesai! Anda bisa login dengan password: password123')
 }

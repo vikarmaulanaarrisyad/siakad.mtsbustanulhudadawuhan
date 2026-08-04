@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client'
+import { PrismaClient } from '../generated/prisma2/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 
@@ -14,8 +14,8 @@ declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+// Force re-instantiation to pick up newly added models without restarting dev server
+globalThis.prismaGlobal = prismaClientSingleton()
+const prisma = globalThis.prismaGlobal
 
 export default prisma
-
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma

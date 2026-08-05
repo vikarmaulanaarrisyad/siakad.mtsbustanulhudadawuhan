@@ -1,7 +1,6 @@
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, 
   MoreVertical, 
@@ -21,50 +20,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getClasses, getClassStats } from "@/actions/class";
+import { getAcademicYears, getActiveAcademicYear } from "@/actions/academic-year";
+import ClassFilter from "./class-filter";
 
-const classesData = [
-  {
-    id: "1",
-    name: "VII-A",
-    level: "Kelas VII",
-    teacher: {
-      name: "Siti Nurhaliza, S.Pd",
-      nip: "198503122010012011",
-      avatar: "https://i.pravatar.cc/150?u=1",
-    },
-    capacity: 32,
-    filled: 32,
-    color: "bg-green-600"
-  },
-  {
-    id: "2",
-    name: "VII-B",
-    level: "Kelas VII",
-    teacher: {
-      name: "Budi Santoso, M.Pd",
-      nip: "197811232005011003",
-      avatar: "https://i.pravatar.cc/150?u=2",
-    },
-    capacity: 32,
-    filled: 30,
-    color: "bg-blue-600"
-  },
-  {
-    id: "3",
-    name: "VIII-A",
-    level: "Kelas VIII",
-    teacher: {
-      name: "Ahmad Fauzan, S.Ag",
-      nip: "199008172019031005",
-      avatar: "https://i.pravatar.cc/150?u=3",
-    },
-    capacity: 32,
-    filled: 31,
-    color: "bg-slate-600"
-  }
-];
+export default async function ClassesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const search = typeof params.q === 'string' ? params.q : '';
+  const selectedYear = typeof params.year === 'string' ? params.year : 'all';
 
-export default function ClassesPage() {
+  // Fetch academic years for dropdown (limit 100 for now to get mostly all)
+  const academicYearsData = await getAcademicYears(1, 100, "");
+  const academicYears = academicYearsData.data;
+
+  // Fetch actual class data and stats
+  const classesData = await getClasses(selectedYear, search);
+  const stats = await getClassStats(selectedYear);
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-8">
       
@@ -73,15 +49,8 @@ export default function ClassesPage() {
         <div className="flex items-center gap-4">
           <h1 className="text-xl font-semibold text-slate-800">Manajemen Kelas</h1>
           <div className="h-6 w-px bg-slate-300 hidden md:block"></div>
-          <Select defaultValue="2024/2025-genap">
-            <SelectTrigger className="w-48 bg-slate-100/50 border-none rounded-full h-9 font-medium text-slate-700 shadow-none">
-              <SelectValue placeholder="Pilih Tahun" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2024/2025-genap">2024/2025 - Genap</SelectItem>
-              <SelectItem value="2024/2025-ganjil">2024/2025 - Ganjil</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* We'll use a Client Component for the Select to handle routing */}
+          <ClassFilter academicYears={academicYears} currentYear={selectedYear} />
         </div>
         <div className="flex items-center gap-3">
           <Button className="bg-green-700 hover:bg-green-800 text-white shadow-sm rounded-lg">
@@ -98,7 +67,7 @@ export default function ClassesPage() {
             <DoorOpen className="text-green-700 w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-4xl font-bold text-slate-800 mb-1">18</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-1">{stats.totalClasses}</h2>
             <p className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Total Kelas Aktif</p>
           </div>
         </div>
@@ -108,7 +77,7 @@ export default function ClassesPage() {
             <Users className="text-blue-700 w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-4xl font-bold text-slate-800 mb-1">542</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-1">{stats.totalStudents}</h2>
             <p className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Total Siswa</p>
           </div>
         </div>
@@ -118,7 +87,7 @@ export default function ClassesPage() {
             <PieChart className="text-slate-600 w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-4xl font-bold text-slate-800 mb-1">30.1</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-1">{stats.averageStudents}</h2>
             <p className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Rata-rata Siswa/Kelas</p>
           </div>
         </div>
@@ -128,7 +97,7 @@ export default function ClassesPage() {
             <Armchair className="text-rose-600 w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-4xl font-bold text-slate-800 mb-1">34</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-1">{stats.availableSeats}</h2>
             <p className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Sisa Kursi Tersedia</p>
           </div>
         </div>
@@ -138,7 +107,7 @@ export default function ClassesPage() {
       <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
         <div className="p-6 flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-slate-100">
           <div>
-            <h3 className="text-base font-semibold text-slate-800">Daftar Kelas (Tahun Ajaran 2024/2025 - Genap)</h3>
+            <h3 className="text-base font-semibold text-slate-800">Daftar Kelas</h3>
             <p className="text-sm text-slate-500 mt-0.5">Kelola penempatan siswa dan wali kelas.</p>
           </div>
           <div className="w-full sm:w-80">
@@ -158,83 +127,74 @@ export default function ClassesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classesData.map((cls) => {
-                const percentage = (cls.filled / cls.capacity) * 100;
-                const isFull = cls.filled >= cls.capacity;
-                return (
-                  <TableRow key={cls.id} className="hover:bg-slate-50/30">
-                    <TableCell className="pl-8 font-bold text-slate-800">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-1.5 h-6 rounded-full ${cls.color}`}></div>
-                        {cls.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="bg-blue-100/50 text-blue-700 hover:bg-blue-100/50 font-medium rounded-full px-3 shadow-none border-none">
-                        {cls.level}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9 border border-slate-100">
-                          <AvatarImage src={cls.teacher.avatar} alt={cls.teacher.name} />
-                          <AvatarFallback className="bg-slate-100 text-slate-600 text-xs">
-                            {cls.teacher.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-slate-700">{cls.teacher.name}</span>
-                          <span className="text-[10px] text-slate-400">NIP. {cls.teacher.nip}</span>
+              {classesData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center h-24 text-slate-500">
+                    Tidak ada data kelas ditemukan.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                classesData.map((cls) => {
+                  const filled = cls._count.students;
+                  const capacity = cls.capacity;
+                  const percentage = capacity > 0 ? (filled / capacity) * 100 : 0;
+                  const isFull = filled >= capacity;
+                  
+                  return (
+                    <TableRow key={cls.id} className="hover:bg-slate-50/30">
+                      <TableCell className="pl-8 font-bold text-slate-800">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-1.5 h-6 rounded-full ${cls.color || 'bg-slate-400'}`}></div>
+                          {cls.name}
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1.5 w-full max-w-xs pr-4">
-                        <div className="flex justify-between text-xs items-end">
-                          <span className="font-semibold text-slate-800">{cls.filled} Siswa</span>
-                          <span className="text-slate-400 text-[10px]">Max {cls.capacity}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="bg-blue-100/50 text-blue-700 hover:bg-blue-100/50 font-medium rounded-full px-3 shadow-none border-none">
+                          {cls.level}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9 border border-slate-100">
+                            <AvatarImage src={cls.homeroom?.image || undefined} alt={cls.homeroom?.name || 'Unknown'} />
+                            <AvatarFallback className="bg-slate-100 text-slate-600 text-xs">
+                              {cls.homeroom?.name ? cls.homeroom.name.substring(0, 2).toUpperCase() : '??'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-slate-700">{cls.homeroom?.name || 'Belum Ditentukan'}</span>
+                            <span className="text-[10px] text-slate-400">NIP. {cls.homeroom?.email || '-'}</span>
+                          </div>
                         </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                          <div 
-                            className={`h-full rounded-full ${isFull ? "bg-red-600" : "bg-green-700"}`}
-                            style={{ width: `${percentage}%` }}
-                          ></div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1.5 w-full max-w-xs pr-4">
+                          <div className="flex justify-between text-xs items-end">
+                            <span className="font-semibold text-slate-800">{filled} Siswa</span>
+                            <span className="text-slate-400 text-[10px]">Max {capacity}</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                            <div 
+                              className={`h-full rounded-full ${isFull ? "bg-red-600" : "bg-green-700"}`}
+                              style={{ width: `${Math.min(percentage, 100)}%` }}
+                            ></div>
+                          </div>
+                          <span className={`text-[10px] font-semibold ${isFull ? "text-red-600" : "text-green-700"}`}>
+                            {isFull ? "Penuh" : `Tersedia ${capacity - filled} kursi`}
+                          </span>
                         </div>
-                        <span className={`text-[10px] font-semibold ${isFull ? "text-red-600" : "text-green-700"}`}>
-                          {isFull ? "Penuh" : `Tersedia ${cls.capacity - cls.filled} kursi`}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="pr-8 text-right">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-700">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      </TableCell>
+                      <TableCell className="pr-8 text-right">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-700">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
-        </div>
-
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-sm text-slate-500 pl-4">
-            Menampilkan 1-10 dari 18 kelas
-          </span>
-          <div className="flex items-center gap-1 pr-4">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-700">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 bg-green-700 text-white hover:bg-green-800 hover:text-white border-green-700 shadow-sm">
-              1
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 text-slate-600 hover:bg-slate-100">
-              2
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-600 hover:bg-slate-100">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
       </div>
       

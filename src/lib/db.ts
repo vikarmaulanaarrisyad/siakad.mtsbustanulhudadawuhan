@@ -10,4 +10,4 @@ const adapter = new PrismaPg(pool)
 // We create a fresh instance specifically to bypass the stubborn Next.js dev server cache
 export const db = new PrismaClient({ adapter })
 
-// Force reload 1
+// Force reload 2

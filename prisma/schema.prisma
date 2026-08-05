@@ -25,6 +25,11 @@ model User {
   password      String?
   image         String?
   role          Role      @default(SISWA)
+  
+  homeroomClasses ClassRoom[] @relation("HomeroomTeacher")
+  classId       String?
+  classRoom     ClassRoom?    @relation("ClassStudents", fields: [classId], references: [id])
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -41,5 +46,26 @@ model AcademicYear {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  classes   ClassRoom[]
+
   @@unique([name, semester])
+}
+
+model ClassRoom {
+  id             String       @id @default(cuid())
+  name           String       // Contoh: "VII-A"
+  level          String       // Contoh: "Kelas VII"
+  capacity       Int          @default(32) // Maksimal kapasitas
+  color          String?      // Indikator warna di UI, misal "bg-green-600"
+  
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  
+  homeroomId     String?      // ID Wali Kelas
+  homeroom       User?        @relation("HomeroomTeacher", fields: [homeroomId], references: [id])
+  
+  students       User[]       @relation("ClassStudents")
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

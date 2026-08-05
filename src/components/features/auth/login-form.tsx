@@ -42,9 +42,15 @@ export function LoginForm({ variant = "desktop" }: LoginFormProps) {
       Alert.error("Login Gagal", "Email atau password yang Anda masukkan salah.");
       setLoading(false);
     } else {
-      Alert.success("Login Berhasil", "Selamat datang di SIAKAD MTs Bustanul Huda.");
-      router.push("/dashboard");
-      router.refresh();
+      Alert.success("Login Berhasil", "Mengarahkan ke dashboard...", {
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+      }).then(() => {
+        router.push("/dashboard");
+        router.refresh();
+      });
     }
   };
 

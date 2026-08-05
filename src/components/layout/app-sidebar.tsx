@@ -30,7 +30,7 @@ export function AppSidebar({ className }: { className?: string }) {
       menus.push(
         { name: "Data Siswa", href: "/dashboard/students", icon: GraduationCap },
         { name: "Data Guru", href: "/dashboard/teachers", icon: Library },
-        { name: "Manajemen Kelas", href: "/dashboard/classes", icon: BookOpen },
+        { name: "Manajemen Kelas", href: "/dashboard/operator/classes", icon: BookOpen },
         { name: "Tahun Pelajaran", href: "/dashboard/operator/academic-years", icon: CalendarDays },
         { name: "Sarana Prasarana", href: "/dashboard/facilities", icon: Briefcase },
         { name: "Pengguna", href: "/dashboard/users", icon: Users },

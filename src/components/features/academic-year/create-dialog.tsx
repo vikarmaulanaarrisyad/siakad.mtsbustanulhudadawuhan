@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { createAcademicYearSchema, type CreateAcademicYearInput } from "@/lib/validations/academic-year";
 import { CalendarIcon, Plus, CalendarPlus, Settings2, CalendarDays, Activity } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -44,42 +44,33 @@ import { createAcademicYear } from "@/actions/academic-year";
 import { cn } from "@/lib/utils";
 import Swal from "sweetalert2";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Tahun ajaran wajib diisi"),
-  semester: z.string().min(1, "Semester wajib diisi"),
-  startDate: z.date({
-    message: "Tanggal mulai wajib diisi",
-  }),
-  midtermDate: z.date().nullable(),
-  endDate: z.date({
-    message: "Tanggal akhir wajib diisi",
-  }),
-  isActive: z.boolean(),
-});
+
 
 export function CreateAcademicYearDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateAcademicYearInput>({
+    resolver: zodResolver(createAcademicYearSchema),
     defaultValues: {
       name: "2024/2025",
       semester: "Ganjil",
       isActive: false,
+      registrationDate: null,
       midtermDate: null,
       startDate: undefined,
       endDate: undefined,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: CreateAcademicYearInput) {
     setLoading(true);
     try {
       const res = await createAcademicYear({
         name: values.name,
         semester: values.semester,
         startDate: values.startDate.toISOString(),
+        registrationDate: values.registrationDate ? values.registrationDate.toISOString() : null,
         midtermDate: values.midtermDate ? values.midtermDate.toISOString() : null,
         endDate: values.endDate.toISOString(),
         isActive: values.isActive,
@@ -238,10 +229,35 @@ export function CreateAcademicYearDialog() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 p-5 bg-slate-50/50 rounded-xl border border-slate-100">
                     <FormField
                       control={form.control}
+                      name="registrationDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel className="text-slate-600 font-medium">Masa Registrasi Ulang</FormLabel>
+                          <Popover>
+                            <PopoverTrigger render={<Button variant="outline" className={cn("w-full h-11 pl-3 text-left font-normal bg-white border-slate-200 hover:border-slate-300 transition-colors focus:ring-green-600/20", !field.value && "text-muted-foreground")} />}>
+                              {field.value ? format(field.value, "dd MMM yyyy", { locale: id }) : <span>Pilih tanggal</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value || undefined}
+                                onSelect={field.onChange}
+                                disabled={(date) => date < new Date("1900-01-01")}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="startDate"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel className="text-slate-600 font-medium">Mulai Pembelajaran</FormLabel>
+                          <FormLabel className="text-slate-600 font-medium">Mulai Kegiatan Belajar</FormLabel>
                           <Popover>
                             <PopoverTrigger render={<Button variant="outline" className={cn("w-full h-11 pl-3 text-left font-normal bg-white border-slate-200 hover:border-slate-300 transition-colors focus:ring-green-600/20", !field.value && "text-muted-foreground")} />}>
                               {field.value ? format(field.value, "dd MMM yyyy", { locale: id }) : <span>Pilih tanggal</span>}
@@ -290,8 +306,8 @@ export function CreateAcademicYearDialog() {
                       control={form.control}
                       name="endDate"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col sm:col-span-2">
-                          <FormLabel className="text-slate-600 font-medium">Ujian Akhir Semester</FormLabel>
+                        <FormItem className="flex flex-col">
+                          <FormLabel className="text-slate-600 font-medium">Ujian Akhir Semester (UAS)</FormLabel>
                           <Popover>
                             <PopoverTrigger render={<Button variant="outline" className={cn("w-full h-11 pl-3 text-left font-normal bg-white border-slate-200 hover:border-slate-300 transition-colors focus:ring-green-600/20", !field.value && "text-muted-foreground")} />}>
                               {field.value ? format(field.value, "dd MMM yyyy", { locale: id }) : <span>Pilih tanggal</span>}

@@ -91,6 +91,7 @@ export const AcademicYearScalarFieldEnum = {
   name: 'name',
   semester: 'semester',
   startDate: 'startDate',
+  registrationDate: 'registrationDate',
   midtermDate: 'midtermDate',
   endDate: 'endDate',
   status: 'status',

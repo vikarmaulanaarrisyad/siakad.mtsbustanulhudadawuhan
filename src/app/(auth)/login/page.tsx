@@ -1,54 +1,9 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { GraduationCap, Loader2, BookOpen } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Alert } from "@/lib/alert";
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Format email tidak valid." }),
-  password: z.string().min(1, { message: "Password tidak boleh kosong." }),
-});
+import { GraduationCap, BookOpen } from "lucide-react";
+import { LoginForm } from "@/components/features/auth/login-form";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-
-    const res = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
-
-    if (res?.error) {
-      Alert.error("Login Gagal", "Email atau password yang Anda masukkan salah.");
-      setLoading(false);
-    } else {
-      Alert.success("Login Berhasil", "Selamat datang di SIAKAD MTs Bustanul Huda.");
-      router.push("/dashboard");
-      router.refresh();
-    }
-  };
-
   return (
     <div className="relative min-h-screen flex flex-col md:items-center md:justify-center bg-slate-900 md:p-4 overflow-hidden">
       
@@ -84,64 +39,7 @@ export default function LoginPage() {
             <p className="text-slate-500 text-sm">Masuk untuk melanjutkan aktivitas akademik.</p>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-semibold">Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="contoh@madrasah.sch.id" 
-                        type="email"
-                        className="h-14 px-4 rounded-2xl bg-slate-50/80 border-slate-200 focus-visible:ring-emerald-500 focus-visible:ring-2 text-base"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-rose-500 text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel className="text-slate-700 font-semibold">Password</FormLabel>
-                      <a href="#" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">
-                        Lupa?
-                      </a>
-                    </div>
-                    <FormControl>
-                      <Input 
-                        placeholder="••••••••" 
-                        type="password"
-                        className="h-14 px-4 rounded-2xl bg-slate-50/80 border-slate-200 focus-visible:ring-emerald-500 focus-visible:ring-2 text-base"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-rose-500 text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <Button 
-                type="submit" 
-                className="w-full h-14 mt-4 rounded-2xl text-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-600/30 active:scale-[0.98] transition-all"
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                ) : (
-                  "Masuk"
-                )}
-              </Button>
-            </form>
-          </Form>
+          <LoginForm variant="mobile" />
 
           <p className="text-center text-sm text-slate-400 mt-10">
             Belum punya akun? <a href="#" className="text-emerald-600 font-semibold">Hubungi Admin</a>
@@ -182,67 +80,7 @@ export default function LoginPage() {
             <p className="text-slate-500 text-base">Silakan isi kredensial Anda untuk melanjutkan</p>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-semibold text-sm uppercase tracking-wider">Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Masukkan alamat email..." 
-                        type="email"
-                        className="h-12 px-4 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-emerald-500 focus-visible:ring-2 transition-all"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-rose-500" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel className="text-slate-700 font-semibold text-sm uppercase tracking-wider">Password</FormLabel>
-                      <a href="#" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:underline">
-                        Lupa password?
-                      </a>
-                    </div>
-                    <FormControl>
-                      <Input 
-                        placeholder="••••••••" 
-                        type="password"
-                        className="h-12 px-4 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-emerald-500 focus-visible:ring-2 transition-all"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage className="text-rose-500" />
-                  </FormItem>
-                )}
-              />
-
-              <Button 
-                type="submit" 
-                className="w-full h-12 mt-6 rounded-xl text-base font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/30 transition-all hover:-translate-y-0.5"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Memproses...
-                  </>
-                ) : (
-                  "Masuk"
-                )}
-              </Button>
-            </form>
-          </Form>
+          <LoginForm variant="desktop" />
           
           <div className="mt-12 pt-6 border-t border-slate-100 text-center">
             <p className="text-sm text-slate-500">

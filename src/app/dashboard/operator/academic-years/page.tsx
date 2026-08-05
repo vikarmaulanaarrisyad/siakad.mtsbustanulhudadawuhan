@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getAcademicYears, getActiveAcademicYear } from "@/actions/academic-year";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
@@ -147,14 +148,16 @@ export default async function AcademicYearsPage({
                       </TableCell>
                       <TableCell>{getStatusBadge(item.status)}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
-                          {item.status.toLowerCase() === 'draf' || item.status.toLowerCase() === 'aktif' ? (
-                            <Edit2 className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-slate-400" />
-                          )}
-                          <span className="sr-only">Aksi</span>
-                        </Button>
+                        <Link href={`/dashboard/operator/academic-years/${item.id}/edit`}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
+                            {item.status.toLowerCase() === 'draf' || item.status.toLowerCase() === 'aktif' ? (
+                              <Edit2 className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4 text-slate-400" />
+                            )}
+                            <span className="sr-only">Aksi</span>
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))
@@ -219,6 +222,16 @@ export default async function AcademicYearsPage({
             {activePeriod ? (
               <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-slate-200 before:to-transparent pl-8">
                 
+                {activePeriod.registrationDate && (
+                  <div className="relative">
+                    <div className="absolute -left-8.75 top-1 bg-amber-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 bg-amber-600 rounded-full"></div>
+                    </div>
+                    <h4 className="text-sm font-semibold text-slate-800">Masa Registrasi Ulang</h4>
+                    <p className="text-xs text-slate-500 mt-1">{formatDate(activePeriod.registrationDate)}</p>
+                  </div>
+                )}
+
                 <div className="relative">
                   <div className="absolute -left-8.75 top-1 bg-emerald-100 w-5 h-5 rounded-full border-4 border-white flex items-center justify-center">
                     <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>

@@ -33,6 +33,19 @@ export class AcademicYearRepository {
   async create(data: any) {
     return db.academicYear.create({ data });
   }
+
+  async getById(id: string) {
+    return db.academicYear.findUnique({
+      where: { id }
+    });
+  }
+
+  async update(id: string, data: any) {
+    return db.academicYear.update({
+      where: { id },
+      data
+    });
+  }
 }
 
 export const academicYearRepository = new AcademicYearRepository();

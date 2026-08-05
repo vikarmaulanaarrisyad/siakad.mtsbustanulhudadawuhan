@@ -33,7 +33,7 @@ export class AcademicYearService {
     return await academicYearRepository.getActive();
   }
 
-  async createNewPeriod(data: { name: string, semester: string, startDate: Date, midtermDate: Date | null, endDate: Date, isActive: boolean }) {
+  async createNewPeriod(data: { name: string, semester: string, startDate: Date, registrationDate: Date | null, midtermDate: Date | null, endDate: Date, isActive: boolean }) {
     // Force HMR recompile
     // Jika user mencentang toggle "Setel sebagai periode aktif", ubah semua yang aktif menjadi selesai
     if (data.isActive) {
@@ -45,9 +45,29 @@ export class AcademicYearService {
       name: data.name,
       semester: data.semester,
       startDate: data.startDate,
+      registrationDate: data.registrationDate,
       midtermDate: data.midtermDate,
       endDate: data.endDate,
       status: data.isActive ? 'Aktif' : 'Draf'
+    });
+  }
+  async getPeriodById(id: string) {
+    return await academicYearRepository.getById(id);
+  }
+
+  async updatePeriod(id: string, data: { name: string, semester: string, startDate: Date, registrationDate: Date | null, midtermDate: Date | null, endDate: Date, status: string }) {
+    if (data.status === 'Aktif') {
+      await academicYearRepository.setAllToInactive();
+    }
+
+    return await academicYearRepository.update(id, {
+      name: data.name,
+      semester: data.semester,
+      startDate: data.startDate,
+      registrationDate: data.registrationDate,
+      midtermDate: data.midtermDate,
+      endDate: data.endDate,
+      status: data.status
     });
   }
 }
